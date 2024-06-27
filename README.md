@@ -36,10 +36,13 @@ To run this project you need to have the following installed:
 ## Initiate The Project
 
 To start working, execute
+(make sure GOPATH and GOROOT is working environment) check first
+echo $GOPATH or $GOROOT
 
 ```
 make init
 ```
+
 
 ## Running
 
@@ -54,7 +57,7 @@ You may see some errors since you have not created the API yet.
 However for testing, you can use Docker run the project, run the following command:
 
 ```
-docke -compose up --build
+docker-compose up --build
 ```
 
 You should be able to access the API at http://localhost:8080
@@ -62,7 +65,7 @@ You should be able to access the API at http://localhost:8080
 If you change `database.sql` file, you need to reinitate the database by running:
 
 ```
-docker compose down --volumes
+docker-compose down --volumes
 ```
 
 ## Testing
