@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "948f0655-af0d-435c-8896-217eb25b2d0a",
+		"name": "SawitPro API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36473976"
+	},
+	"item": [
+		{
+			"name": "Create estate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"length\": 10,\n    \"width\": 110\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/estate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"estate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create estate tree",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"x\": 10,\n    \"y\": 10,\n    \"height\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/estate/ac90bb9c-52b0-4add-93d9-e199fccf1408/tree",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"estate",
+						"ac90bb9c-52b0-4add-93d9-e199fccf1408",
+						"tree"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estate stats",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/estate/xxx/stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"estate",
+						"xxx",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estate Drone Plan",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/estate/{id}/drone-plan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"estate",
+						"{id}",
+						"drone-plan"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
