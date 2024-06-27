@@ -40,6 +40,6 @@ func NewRouter(
 	r := e.Group("")
 	r.POST("/estate", handle.CreateEstate)
 	r.POST("/estate/tree", handle.CreateTree)
-	r.GET("/estate/:id/stats", handle.GetStats)
-	r.GET("/estate/:id/drone-plan", handle.GetDronePlan)
+	r.GET("/estate/:id/stats", handle.TreeStatsByEstateId)
+	r.GET("/estate/:id/drone-plan", handle.Distance)
 }
