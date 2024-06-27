@@ -39,41 +39,21 @@ func (s Service) CreateEstate(ctx context.Context, request CreateEstateRequest) 
 	return id, nil
 }
 
-func (s Service) CreateTree(ctx context.Context, payload PayloadCreateTree) (uuid.UUID, error) {
+func (s Service) CreateTree(ctx context.Context, payload CreateTreeRequest) (uuid.UUID, error) {
 	id := uuid.New()
 	payload.Id = id
 
-	if err := utils.Validator(payload); err != nil {
+	if err := helpers.Validator(payload); err != nil {
 		return uuid.Nil, err
 	}
 
-	estateData, err := s.repo.FindEstateById(ctx, payload.EstateId)
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	if payload.Width <= estateData.Width && payload.Length <= estateData.Length {
-		if err := s.repo.CreateTree(ctx, model.Tree{
-			Id:       id,
-			Width:    payload.Width,
-			Length:   payload.Length,
-			Height:   payload.Height,
-			EstateId: payload.EstateId,
-		}); err != nil {
-			return uuid.Nil, err
-		}
-
-		if err := s.repo.CreateStats(ctx, model.Stats{
-			TreeId:   id,
-			Width:    payload.Width,
-			Length:   payload.Length,
-			Height:   payload.Height,
-			EstateId: payload.EstateId,
-		}); err != nil {
-			return uuid.Nil, err
-		}
-
-	} else {
+	if err := s.repo.CreateStats(ctx, model.Stats{
+		TreeId:   id,
+		Width:    payload.X,
+		Length:   payload.Y,
+		Height:   payload.Height,
+		EstateId: payload.EstateId,
+	}); err != nil {
 		return uuid.Nil, err
 	}
 

@@ -48,8 +48,8 @@ type (
 	//model struct tree repository
 	Tree struct {
 		Id         uuid.UUID `json:"id"`
-		X          int       `json:"x"`
-		Y          int       `json:"y"`
+		Width      int       `json:"width"`
+		Length     int       `json:"length"`
 		Height     int       `json:"height"`
 		EstateId   uuid.UUID `json:"estate_id"`
 		CreateTime time.Time `json:"create_time"`

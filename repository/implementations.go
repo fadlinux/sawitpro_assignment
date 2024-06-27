@@ -34,7 +34,7 @@ func (r *Repository) CreateTree(ctx context.Context, payload model.Tree) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(payload.Id, payload.EstateId, payload.X, payload.Y, payload.Height, time.Now())
+	_, err = stmt.Exec(payload.Id, payload.EstateId, payload.Width, payload.Length, payload.Height, time.Now())
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,6 @@ func (r *Repository) FindEstateById(ctx context.Context, id uuid.UUID) (model.Es
 			estate
 		where 
 		    id = $1
-			AND deleted_at is null
 	`
 
 	row := r.Db.QueryRow(query, id)
@@ -66,7 +65,7 @@ func (r *Repository) FindEstateById(ctx context.Context, id uuid.UUID) (model.Es
 func (r *Repository) CreateStats(ctx context.Context, payload model.Stats) error {
 	query := ` 
 		INSERT INTO 
-		  	stats (tree_id, width, length, height, estate_id, create_time, update_time, deleted_at) 
+		  	stats (tree_id, width, length, height, estate_id, create_time, update_time) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 
@@ -102,7 +101,7 @@ func (r *Repository) UpdateTree(ctx context.Context, payload model.Tree) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(payload.Y, payload.Y, payload.Height, time.Now(), payload.Id)
+	_, err = stmt.Exec(payload.Width, payload.Length, payload.Height, time.Now(), payload.Id)
 	if err != nil {
 		return err
 	}
@@ -115,16 +114,14 @@ func (r *Repository) FindTreeById(ctx context.Context, id uuid.UUID) (model.Tree
 
 	query := `
 		SELECT 
-			id, x, y, height, estate_id
+			id, width, length, height, estate_id
 		FROM
 			tree
-		where 
-		    id = $1
-			AND deleted_at is null
+		where id = $1
 	`
 
 	row := r.Db.QueryRow(query, id)
-	if err := row.Scan(&res.Id, &res.X, &res.Y, &res.Height, &res.EstateId); err != nil {
+	if err := row.Scan(&res.Id, &res.Width, &res.Length, &res.Height, &res.EstateId); err != nil {
 		return res, err
 	}
 
@@ -141,7 +138,6 @@ func (r *Repository) FindStatsByEstateId(ctx context.Context, id uuid.UUID) (Fin
 			stats 
 		where 
 			estate_id = $1
-			AND deleted_at is null
 	`
 
 	row := r.Db.QueryRow(query, id)
@@ -162,7 +158,6 @@ func (r *Repository) ListStatsByEstateId(ctx context.Context, id uuid.UUID) ([]m
 		 	stats
 		WHERE
 			estate_id = $1
-			AND deleted_at is null
 	`
 
 	rows, err := r.Db.Query(query, id)
@@ -192,7 +187,6 @@ func (r *Repository) FindAllTreeByEstateId(ctx context.Context, estateId uuid.UU
 			tree
 		where
 			estate_id = $1
-			AND deleted_at is null
 	`
 
 	rows, err := r.Db.Query(query, estateId)
