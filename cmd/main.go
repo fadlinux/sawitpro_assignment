@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/SawitProRecruitment/UserService/generated"
-	"github.com/SawitProRecruitment/UserService/handler"
-	"github.com/SawitProRecruitment/UserService/repository"
+	"github.com/fadlinux/sawitpro_assignment/handler"
+	"github.com/fadlinux/sawitpro_assignment/repository"
+	"github.com/fadlinux/sawitpro_assignment/service"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -14,20 +14,32 @@ import (
 func main() {
 	e := echo.New()
 
-	var server generated.ServerInterface = newServer()
-
-	generated.RegisterHandlers(e, server)
-	e.Use(middleware.Logger())
-	e.Logger.Fatal(e.Start(":1323"))
-}
-
-func newServer() *handler.Server {
 	dbDsn := os.Getenv("DATABASE_URL")
 	var repo repository.RepositoryInterface = repository.NewRepository(repository.NewRepositoryOptions{
 		Dsn: dbDsn,
 	})
-	opts := handler.NewServerOptions{
-		Repository: repo,
-	}
-	return handler.NewServer(opts)
+
+	//set new service dependent repo
+	service.NewService(repo)
+
+	var service = service.NewService(repo)
+
+	NewRouter(e, service)
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Logger.Fatal(e.Start(":1323"))
+}
+
+func NewRouter(
+	e *echo.Echo,
+	service service.ServiceInterface,
+) {
+	handle := handler.NewServer(e, service)
+
+	r := e.Group("")
+	r.POST("/estate", handle.CreateEstate)
+	r.POST("/estate/tree", handle.CreateTree)
+	r.GET("/estate/:id/stats", handle.GetStats)
+	r.GET("/estate/:id/drone-plan", handle.GetDronePlan)
 }

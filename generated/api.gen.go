@@ -31,9 +31,10 @@ type CreateEstateResponse struct {
 
 // CreateTreeRequest defines model for CreateTreeRequest.
 type CreateTreeRequest struct {
-	Height int `json:"height"`
-	X      int `json:"x"`
-	Y      int `json:"y"`
+	Height int    `json:"height"`
+	Uuid   string `json:"uuid"`
+	X      int    `json:"x"`
+	Y      int    `json:"y"`
 }
 
 // CreateTreeResponse defines model for CreateTreeResponse.
@@ -44,6 +45,19 @@ type CreateTreeResponse struct {
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
 	Message string `json:"message"`
+}
+
+// GetDronePlanResponse defines model for GetDronePlanResponse.
+type GetDronePlanResponse struct {
+	Distance int `json:"distance"`
+}
+
+// GetStatsResponse defines model for GetStatsResponse.
+type GetStatsResponse struct {
+	Count  int    `json:"count"`
+	Max    int    `json:"max"`
+	Median string `json:"median"`
+	Min    int    `json:"min"`
 }
 
 // CreateEstateJSONRequestBody defines body for CreateEstate for application/json ContentType.
@@ -58,8 +72,14 @@ type ServerInterface interface {
 	// (POST /estate)
 	CreateEstate(ctx echo.Context) error
 	// APIs for stores tree data in a given estate with the ID, It receives three positive integers x, y, and height
-	// (POST /estate/{Id}/tree)
-	CreateTree(ctx echo.Context, id string) error
+	// (POST /estate/tree)
+	CreateTree(ctx echo.Context) error
+
+	// (GET /estate/{Id}/drone-plan)
+	GetDronePlan(ctx echo.Context, id string) error
+	// APIs for will simply return the stats of the tree in the estate with ID
+	// (GET /estate/{Id}stats)
+	GetStats(ctx echo.Context, id string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -79,6 +99,15 @@ func (w *ServerInterfaceWrapper) CreateEstate(ctx echo.Context) error {
 // CreateTree converts echo context to params.
 func (w *ServerInterfaceWrapper) CreateTree(ctx echo.Context) error {
 	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateTree(ctx)
+	return err
+}
+
+// GetDronePlan converts echo context to params.
+func (w *ServerInterfaceWrapper) GetDronePlan(ctx echo.Context) error {
+	var err error
 	// ------------- Path parameter "Id" -------------
 	var id string
 
@@ -88,7 +117,23 @@ func (w *ServerInterfaceWrapper) CreateTree(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.CreateTree(ctx, id)
+	err = w.Handler.GetDronePlan(ctx, id)
+	return err
+}
+
+// GetStats converts echo context to params.
+func (w *ServerInterfaceWrapper) GetStats(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "Id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "Id", runtime.ParamLocationPath, ctx.Param("Id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter Id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetStats(ctx, id)
 	return err
 }
 
@@ -121,27 +166,31 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/estate", wrapper.CreateEstate)
-	router.POST(baseURL+"/estate/:Id/tree", wrapper.CreateTree)
+	router.POST(baseURL+"/estate/tree", wrapper.CreateTree)
+	router.GET(baseURL+"/estate/:Id/drone-plan", wrapper.GetDronePlan)
+	router.GET(baseURL+"/estate/:Idstats", wrapper.GetStats)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

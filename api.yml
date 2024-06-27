@@ -54,7 +54,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /estate/{Id}/tree:
+  /estate/tree:
     post:
       tags:
         - Creates store tree data
@@ -66,7 +66,33 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateTreeRequest"
-      
+    
+      responses:
+        '201':
+          description: Test return
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/CreateTreeResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /estate/{Id}stats:
+    get:
+      tags:
+        - Get the stats of the tree in the estate with ID
+      summary: APIs for will simply return the stats of the tree in the estate with ID
+      operationId: getStats
       parameters:
         - name: Id
           in: path
@@ -75,13 +101,49 @@ paths:
             type: string
             format: string
           example: "7e6e5b8e-007a-4bd4-bbcd-57b8e06a029d"
+
       responses:
         '201':
           description: Test return
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/CreateTreeResponse"
+                $ref: "#/components/schemas/GetStatsResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /estate/{Id}/drone-plan:
+    get:
+      tags:
+        - Get Sum distance of the drone monitoring travel
+      summary:
+      operationId: GetDronePlan
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+          example: "7e6e5b8e-007a-4bd4-bbcd-57b8e06a029d"
+ 
+      responses:
+        '201':
+          description: Test return
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/GetDronePlanResponse"
         '400':
           description: Bad Request
           content:
@@ -122,6 +184,7 @@ components:
         - x
         - y 
         - height
+        - uuid
       properties:
         x:
           type: integer
@@ -129,6 +192,8 @@ components:
           type: integer
         height:
           type: integer
+        uuid:
+          type: string
     CreateTreeResponse:
       type: object
       required:
@@ -136,6 +201,29 @@ components:
       properties:
         ID:
           type: string
+    GetStatsResponse:
+      type: object
+      required:
+        - count
+        - max
+        - min
+        - median
+      properties:
+        count:
+          type: integer
+        max:
+          type: integer
+        min:
+          type: integer
+        median:
+          type: string
+    GetDronePlanResponse:
+      type: object
+      required:
+        - distance
+      properties:
+        distance:
+          type: integer
     ErrorResponse:
       type: object
       required:
