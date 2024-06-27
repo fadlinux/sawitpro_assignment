@@ -1,13 +1,3 @@
-# This is the OpenAPI specification for your service. It is used to generate the client code.
-# To generate the server code, use the Gradle task `openApiGenerate`. The 
-# generated code will be placed in `build/generate-resources/main`.
-#
-# We will evaluate you based on how well you design your API.
-# 1. How well it follows REST principles.
-# 2. How easy it is to understand and use.
-#
-# References
-# 1. https://swagger.io/specification/
 openapi: "3.0.0"
 info:
   version: 1.0.0
@@ -16,39 +6,136 @@ info:
     name: MIT
 servers:
   - url: http://localhost
+
+
+tags:
+  - name: Creates and stores new estate 
+    description: APIs for creates and stores new estate in the database. This will receive two integers width and length, representing a palm oil plantation estate. 
+  - name: Creates store tree data
+    description: APIs for stores tree data in a given estate with the ID, It receives three positive integers x, y, and height
+  - name: Get the stats of the tree in the estate with ID
+    description: APIs for will simply return the stats of the tree in the estate with ID
+  - name: Get Sum distance of the drone monitoring travel
+    description: APIs for ill simply return the sum distance of the drone monitoring travel in the estate with ID
+  - name: Get Max Distance Drone
+    description: APIs for ill simply return the sum distance of the drone monitoring travel in the estate with ID
+
 paths:
-  /hello:
-    get:
-      summary: This is just a test endpoint to get you started.
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
+  /estate:
+    post:
+      tags:
+        - Creates and stores new estate 
+      summary: This Endpoint For Create Estate
+      operationId: createEstate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEstateRequest"
+              
       responses:
-        '200':
+        '201':
           description: Test return
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/HelloResponse"
-        '404':
-          description: Not found
+                $ref: "#/components/schemas/CreateEstateResponse"
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /estate/{Id}/tree:
+    post:
+      tags:
+        - Creates store tree data
+      summary: APIs for stores tree data in a given estate with the ID, It receives three positive integers x, y, and height
+      operationId: createTree
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTreeRequest"
+      
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+          example: "7e6e5b8e-007a-4bd4-bbcd-57b8e06a029d"
+      responses:
+        '201':
+          description: Test return
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/CreateTreeResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+
+
 components:
   schemas:
-    HelloResponse:
+    CreateEstateRequest:
       type: object
       required:
-        - message
+        - width
+        - length
       properties:
-        message:
+        width:
+          type: integer
+        length:
+          type: integer
+    CreateEstateResponse:
+      type: object
+      required:
+        - id
+      properties:
+        ID:
           type: string
-          example: Hello, World!
+    CreateTreeRequest:
+      type: object
+      required:
+        - x
+        - y 
+        - height
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        height:
+          type: integer
+    CreateTreeResponse:
+      type: object
+      required:
+        - id
+      properties:
+        ID:
+          type: string
     ErrorResponse:
       type: object
       required:
